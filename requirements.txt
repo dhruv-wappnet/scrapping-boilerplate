@@ -1,0 +1,3 @@
+pytest-playwright
+bs4
+psycopg2-binary
