@@ -4,7 +4,30 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def select_all_links(conn, table_name):
+    try:
+        cursor = conn.cursor()
 
+        cursor.execute(f"SELECT profile_url FROM {table_name}")
+        links = cursor.fetchall()
+
+        cursor.close()
+
+        return links
+    except pg.Error as e:
+        print("postgres error selecting links")
+        return []
+
+
+def bulk_insert_links(conn, links):
+    try:
+        cursor = conn.cursor()
+        # Use executemany to insert multiple rows at once
+        cursor.executemany("INSERT INTO your_table_name (profile_url) VALUES (%s) ON CONFLICT(profile_url) DO NOTHING", [(link,) for link in links])
+        conn.commit()
+        cursor.close()
+    except pg.Error as e:
+        print("Error bulk inserting links:", e)
 
 def connect_database():
     try:
